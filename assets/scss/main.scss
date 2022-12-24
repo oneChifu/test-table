@@ -1,0 +1,17 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+    background: #cacaca;
+    padding: 20px 0;
+}
+.container {
+    max-width: 640px;
+    margin: auto;
+    padding: 0 20px;
+}
