@@ -2,10 +2,10 @@ export default {
     // Global page headers: https://go.nuxtjs.dev/config-head
     ssr: false,
 
-    target: 'server',
+    target: 'static',
 
-    router: {
-        base: '/test-table/',
+    generate: {
+        fallback: true,
     },
 
     head: {
@@ -65,7 +65,6 @@ export default {
         '@nuxtjs/eslint-module',
         // https://go.nuxtjs.dev/stylelint
         '@nuxtjs/stylelint-module',
-        // '@nuxtjs/style-resources',
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
@@ -94,5 +93,9 @@ export default {
     },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
-    build: {},
+    build: ['@nuxtjs/netlify-files'],
+
+    netlifyFiles: {
+        /* module options */
+    },
 };
