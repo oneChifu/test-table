@@ -1,6 +1,6 @@
 # test-table
 
-### [Live demo](https://onechifu.github.io/test-table/){target="\_blank"}
+### [Live demo](https://onechifu.github.io/test-table/)
 
 ## Build Setup
 
