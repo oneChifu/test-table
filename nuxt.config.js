@@ -2,6 +2,8 @@ export default {
     // Global page headers: https://go.nuxtjs.dev/config-head
     ssr: true,
 
+    target: 'static',
+
     head: {
         title: 'test-table',
         htmlAttrs: {
@@ -66,30 +68,12 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
-        // ['nuxt-sass-resources-loader', ['./assets/scss/main.scss']],
-        // [
-        // '@nuxtjs/style-resources',
-        //     {
-        //         scss: [
-        //             '~assets/scss/_main.scss', // use underscore "_" & also file extension ".scss"
-        //         ],
-        //     },
-        // ],
     ],
-
-    // styleResources: {
-    //     scss: [
-    //         './assets/scss/_main.scss', // use underscore "_" & also file extension ".scss"
-    //     ],
-    //     hoistUseStatements: true,
-    // },
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-        // baseURL: 'https://jsonplaceholder.typicode.com/',
         // baseURL: '/',
-        // browserBaseURL: 'http://localhost:8000',
         proxy: true,
     },
 
@@ -101,11 +85,5 @@ export default {
     },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
-    build: {
-        // loaders: {
-        //     scss: {
-        //         prependData: "@import '~assets/scss/_main.scss;",
-        //     },
-        // },
-    },
+    build: {},
 };
