@@ -4,6 +4,10 @@ export default {
 
     target: 'static',
 
+    router: {
+        base: '/test-table/',
+    },
+
     head: {
         title: 'test-table',
         htmlAttrs: {
