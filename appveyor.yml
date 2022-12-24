@@ -18,8 +18,6 @@ install:
     - ps: Install-Product node $env:nodejs_version
     # install modules
     - npm install
-    # generate static files
-    - npm run generate
     # configure global git credentials store (https://www.appveyor.com/docs/how-to/git-push/)
     - git config --global credential.helper store
     - ps:

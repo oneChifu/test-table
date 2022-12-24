@@ -5,7 +5,7 @@ export default {
     target: 'server',
 
     router: {
-        base: '/dist/',
+        base: '/test-table/',
     },
 
     head: {
