@@ -1,11 +1,11 @@
 export default {
     // Global page headers: https://go.nuxtjs.dev/config-head
-    ssr: true,
+    ssr: false,
 
     target: 'static',
 
     router: {
-        base: '/test-table/dist/',
+        base: '/',
     },
 
     head: {
@@ -72,20 +72,25 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
+        '@nuxtjs/proxy',
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-        // baseURL: '/',
-        proxy: true,
+        baseURL: '/',
+        // proxy: true,
     },
 
-    proxy: {
-        '/api/': {
-            target: 'https://jsonplaceholder.typicode.com',
-            pathRewrite: { '^/api/': '' },
-        },
+    // proxy: {
+    //     '/api/': {
+    //         target: 'https://jsonplaceholder.typicode.com',
+    //         pathRewrite: { '^/api/': '' },
+    //     },
+    // },
+
+    env: {
+        API_BASEURL: 'https://jsonplaceholder.typicode.com',
     },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build

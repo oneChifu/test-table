@@ -51,9 +51,11 @@ export default {
 
         this.pagination.current = Number(this.$route.query.page || 1);
 
-        const getUsers = this.$axios.get(`/api/users`);
+        const getUsers = this.$axios.get(
+            `https://jsonplaceholder.typicode.com/users`
+        );
         const getTodos = this.$axios.get(
-            `/api/todos?_page=${this.pagination.current}&_limit=${this.pagination.limit}&title_like=${this.filter.title}`
+            `https://jsonplaceholder.typicode.com/todos?_page=${this.pagination.current}&_limit=${this.pagination.limit}&title_like=${this.filter.title}`
         );
 
         // const getTodos = '';
@@ -99,6 +101,8 @@ export default {
         },
 
         todos() {
+            if (!this.todosData.length) return [];
+
             return this.todosData.map(todo => {
                 todo.user = this.usersData.find(
                     user => user.id === todo.userId
