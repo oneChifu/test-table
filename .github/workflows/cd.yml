@@ -13,7 +13,7 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@master
+              uses: actions/checkout@gh-pages
 
             - name: Setup node env
               uses: actions/setup-node@v2.1.2
@@ -22,9 +22,6 @@ jobs:
 
             - name: Install dependencies
               run: npm install
-
-            - name: Generate
-              run: npm run predeploy
 
             - name: Deploy
               run: npm run deploy
