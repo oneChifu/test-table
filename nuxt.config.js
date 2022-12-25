@@ -82,22 +82,23 @@ export default {
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
         baseURL: '/',
-        // proxy: true,
+        proxy: process.env.NODE_ENV === 'development',
     },
 
-    // proxy: {
-    //     '/api/': {
-    //         target: 'https://jsonplaceholder.typicode.com',
-    //         pathRewrite: { '^/api/': '' },
-    //     },
-    // },
+    proxy:
+        process.env.NODE_ENV === 'production'
+            ? {
+                  '/api/': {
+                      target: 'https://jsonplaceholder.typicode.com',
+                      pathRewrite: { '^/api/': '' },
+                  },
+              }
+            : {},
 
     env: {
         API_BASEURL: 'https://jsonplaceholder.typicode.com',
     },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
-    build: ['@nuxtjs/netlify-files'],
-
-    netlifyFiles: {},
+    build: {},
 };
