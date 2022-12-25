@@ -1,10 +1,13 @@
 <template>
-    <input
-        v-model="title"
-        type="text"
-        placeholder="Filter by title"
-        :disabled="isDisabled"
-    />
+    <div class="todos-filter">
+        <input
+            v-model="title"
+            class="todos-filter_input"
+            type="text"
+            placeholder="Filter by title"
+            :disabled="isDisabled"
+        />
+    </div>
 </template>
 
 <script>
@@ -16,10 +19,6 @@ export default {
             type: Boolean,
             default: false,
         },
-    },
-
-    data: () => {
-        return {};
     },
 
     computed: {

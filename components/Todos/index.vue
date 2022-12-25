@@ -1,25 +1,16 @@
 <template>
     <div class="todos">
-        <div class="todos_header">
-            <div class="todos_logo">TODO'S</div>
-
-            <TodosFilter :is-disabled="$fetchState.error" />
-        </div>
+        <TodosHeader :state="$fetchState" :user="user" />
 
         <div v-if="$fetchState.error" class="error">
             {{ $fetchState.error.message }}
         </div>
 
-        <LoaderIndicator
-            v-if="loading && !$fetchState.error"
-            is-block
-            :is-loading="loading"
-        />
-
-        <TodosList v-else :todos="todos" />
-
-        <Pagination
-            v-if="!$fetchState.error && !$fetchState.pending"
+        <TodosList
+            :state="$fetchState"
+            :loading="loading"
+            :filter="filter"
+            :todos="todos"
             :pagination="pagination"
         />
     </div>
@@ -35,7 +26,8 @@ export default {
 
     data: () => {
         return {
-            loading: true,
+            timer: null,
+            loading: false,
             usersData: [],
             todosData: [],
             pagination: {
@@ -47,26 +39,41 @@ export default {
     },
 
     async fetch() {
-        this.loading = true;
-
         this.pagination.current = Number(this.$route.query.page || 1);
 
+        // Get query string from filtered queries array
+        const todosQuery = '?'.concat(
+            Object.entries({
+                _page: this.pagination.current,
+                _limit: this.pagination.limit,
+                title_like: this.filter.title,
+                userId: this.$route.query.userId,
+            })
+                .filter(query => query[1])
+                .map(([key, value]) => {
+                    return `${key}=${value}`;
+                })
+                .join('&')
+        );
+
+        // Get TODOS by axios
+        const getTodos = this.$axios.get(
+            `https://jsonplaceholder.typicode.com/todos${todosQuery}`
+        );
+        // Get USERS by axios
         const getUsers = this.$axios.get(
             `https://jsonplaceholder.typicode.com/users`
         );
-        const getTodos = this.$axios.get(
-            `https://jsonplaceholder.typicode.com/todos?_page=${this.pagination.current}&_limit=${this.pagination.limit}&title_like=${this.filter.title}`
-        );
-
-        // const getTodos = '';
-        // const getTodos = import('~data/todos.json');
 
         // Pagination hook with first page
         if (this.$route.query.page <= 1) {
-            this.$router.replace({ query: { page: undefined } });
+            this.$router.replace({
+                query: { ...this.$route.query, page: undefined },
+            });
         }
 
         try {
+            // Destructuring responce data from axios requests
             const [
                 { data: usersData },
                 {
@@ -78,6 +85,7 @@ export default {
             this.usersData = usersData;
             this.todosData = todosData;
 
+            // Parse links for pagination from "jsonplaceholder.typicode.com" service
             if (todosLink) {
                 const {
                     last: { _page: last },
@@ -111,6 +119,12 @@ export default {
                 return todo;
             });
         },
+
+        user() {
+            return this.usersData.find(
+                user => user.id === Number(this.$route.query.userId)
+            );
+        },
     },
 
     watch: {
@@ -120,28 +134,41 @@ export default {
                     this.$route.query.page &&
                     this.$route.query.page !== this.pagination.current
                 ) {
-                    this.$router.replace({ query: { page: undefined } });
+                    this.$router.replace({
+                        query: { ...this.$router.query, page: undefined },
+                    });
                 } else {
-                    this.$fetch();
+                    this.loading = true;
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(() => {
+                        this.$fetch();
+                    }, 300);
                 }
             },
+            immediate: true,
         },
 
-        '$route.query.page': {
+        '$route.query': {
             handler() {
-                this.$fetch();
-            },
-        },
-    },
+                if (process.client) {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth',
+                    });
+                }
 
-    activated() {
-        if (this.$fetchState.timestamp <= Date.now() - 30000) {
-            this.$fetch();
-        }
+                this.loading = true;
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    this.$fetch();
+                }, 300);
+            },
+            deep: true,
+        },
     },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import 'assets/scss/todos.scss';
 </style>

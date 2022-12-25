@@ -1,11 +1,32 @@
 <template>
     <div class="pagination">
-        <nuxt-link to="/"> First </nuxt-link>
+        <nuxt-link
+            :to="{
+                query: { ...$route.query, page: undefined },
+            }"
+            :class="[
+                'pagination_item',
+                {
+                    pagination_item__disabled: !firstPage,
+                },
+            ]"
+        >
+            First
+        </nuxt-link>
 
         <nuxt-link
             :to="{
-                query: { page: previousPage },
+                query: {
+                    ...$route.query,
+                    page: previousPage <= 1 ? undefined : previousPage,
+                },
             }"
+            :class="[
+                'pagination_item',
+                {
+                    pagination_item__disabled: !previousPage,
+                },
+            ]"
         >
             Prev
         </nuxt-link>
@@ -16,22 +37,42 @@
             :to="{
                 query: { ...$route.query, page: page > 1 ? page : undefined },
             }"
+            :class="[
+                'pagination_item',
+                'pagination_item__number',
+                {
+                    [$router.options.linkExactActiveClass]:
+                        page === 1 && $route.query.page === undefined,
+                },
+            ]"
         >
             {{ page }}
         </nuxt-link>
 
         <nuxt-link
             :to="{
-                query: { page: nextPage },
+                query: { ...$route.query, page: nextPage },
             }"
+            :class="[
+                'pagination_item',
+                {
+                    pagination_item__disabled: !nextPage,
+                },
+            ]"
         >
             Next
         </nuxt-link>
 
         <nuxt-link
             :to="{
-                query: { page: lastPage },
+                query: { ...$route.query, page: lastPage },
             }"
+            :class="[
+                'pagination_item',
+                {
+                    pagination_item__disabled: !lastPage,
+                },
+            ]"
         >
             Last
         </nuxt-link>
@@ -46,29 +87,30 @@ export default {
         pagination: {
             type: Object,
             required: true,
-            validator: obj => {
-                return (
-                    !isNaN(obj.limit) && !isNaN(obj.current) && !isNaN(obj.last)
-                );
-            },
         },
     },
 
     computed: {
         previousPage() {
-            const previousPage = this.pagination.current - 1;
-            return previousPage <= 1 ? undefined : previousPage;
+            return this.pagination.current - 1 < 1
+                ? undefined
+                : this.pagination.current - 1;
         },
 
         nextPage() {
-            const nextPage = this.pagination.current + 1;
-            return nextPage > this.pagination.last
-                ? this.pagination.last
-                : nextPage;
+            return this.pagination.current + 1 > this.pagination.last
+                ? undefined
+                : this.pagination.current + 1;
+        },
+
+        firstPage() {
+            return this.pagination.current > 1 ? '/' : undefined;
         },
 
         lastPage() {
-            return this.pagination.last;
+            return this.pagination.current >= this.pagination.last
+                ? undefined
+                : this.pagination.last;
         },
 
         pages() {
@@ -98,3 +140,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import 'assets/scss/pagination.scss';
+</style>

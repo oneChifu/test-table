@@ -6,12 +6,36 @@
 body {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
-    line-height: 18px;
-    background: #cacaca;
+    line-height: 1.2;
+    background: rgb(127, 155, 177);
     padding: 20px 0;
+    color: #1a1a1a;
+}
+a {
+    color: #0081e4;
+    text-decoration: none;
+    transition: color 0.1s linear;
+
+    &:hover {
+        color: #58a9e7;
+    }
 }
 .container {
+    position: relative;
+    flex: 1;
     max-width: 640px;
     margin: auto;
-    padding: 0 20px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+}
+.error {
+    width: 100%;
+    padding: 15px;
+    margin: 30px 0;
+    border-radius: 5px;
+    background: rgb(255, 234, 234);
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
