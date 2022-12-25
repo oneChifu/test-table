@@ -138,11 +138,7 @@ export default {
                         query: { ...this.$router.query, page: undefined },
                     });
                 } else {
-                    this.loading = true;
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(() => {
-                        this.$fetch();
-                    }, 300);
+                    this.refresh();
                 }
             },
             immediate: true,
@@ -157,13 +153,19 @@ export default {
                     });
                 }
 
-                this.loading = true;
-                clearTimeout(this.timer);
-                this.timer = setTimeout(() => {
-                    this.$fetch();
-                }, 300);
+                this.refresh();
             },
             deep: true,
+        },
+    },
+
+    methods: {
+        refresh() {
+            this.loading = true;
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                this.$fetch();
+            }, 300);
         },
     },
 };
