@@ -4,6 +4,10 @@ export default {
 
     target: 'static',
 
+    router: {
+        base: process.env.NODE_ENV === 'production' ? '/test-table/' : '/',
+    },
+
     generate: {
         fallback: true,
     },
@@ -48,7 +52,7 @@ export default {
         ],
     },
 
-    loading: '~/components/LoaderIndicator.vue',
+    loading: '@/components/LoaderIndicator.vue',
 
     // Global CSS: https://go.nuxtjs.dev/config-css
     css: ['@/assets/scss/main.scss'],
@@ -95,7 +99,5 @@ export default {
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: ['@nuxtjs/netlify-files'],
 
-    netlifyFiles: {
-        /* module options */
-    },
+    netlifyFiles: {},
 };
