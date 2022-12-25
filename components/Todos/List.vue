@@ -46,11 +46,5 @@ export default {
             required: true,
         },
     },
-
-    computed: {
-        isUser() {
-            return Boolean(this.$route.query.userId);
-        },
-    },
 };
 </script>

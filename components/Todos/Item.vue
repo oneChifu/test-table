@@ -13,7 +13,7 @@
         </div>
 
         <div class="todos-item_content">
-            <div class="todos-item_title">{{ todo.title }}</div>
+            <div class="todos-item_title" v-html="todo.title"></div>
             <div v-if="!isUser" class="todos-item_author">
                 by
                 <nuxt-link

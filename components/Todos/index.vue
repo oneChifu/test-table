@@ -111,10 +111,19 @@ export default {
         todos() {
             if (!this.todosData.length) return [];
 
-            return this.todosData.map(todo => {
+            const todos = [...this.todosData];
+
+            return todos.map(todo => {
                 todo.user = this.usersData.find(
                     user => user.id === todo.userId
                 );
+
+                if (this.filter.title) {
+                    todo.title = todo.title.replaceAll(
+                        this.filter.title,
+                        `<b>${this.filter.title}</b>`
+                    );
+                }
 
                 return todo;
             });
