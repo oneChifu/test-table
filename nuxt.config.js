@@ -9,7 +9,7 @@ export default {
     },
 
     head: {
-        title: 'test-table',
+        title: 'TODOS',
         htmlAttrs: {
             lang: 'uk',
         },
