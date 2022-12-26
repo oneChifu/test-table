@@ -2,11 +2,11 @@
     <div>
         <div class="todos-list">
             <LoaderIndicator
-                :is-loading="loading && !state.error"
+                :is-loading="(loading && !state.error) || state.pending"
                 is-absolute
             />
 
-            <div v-if="!loading && !todos.length" class="todos_empty">
+            <div v-if="!todos.length && !state.pending" class="todos_empty">
                 There are no todo's
                 <span v-if="filter.title"
                     >with keyword <b>{{ filter.title }}</b></span
@@ -16,7 +16,7 @@
             <TodosItem v-for="todo in todos" :key="todo.id" :todo="todo" />
         </div>
 
-        <Pagination v-if="!state.error" :pagination="pagination" />
+        <Pagination v-if="!state.error && !state.pending" v-bind="pagination" />
     </div>
 </template>
 

@@ -18,8 +18,8 @@
 
 <script>
 import parseLinkHeader from 'parse-link-header';
-// import usersData from '../../data/users.js';
-// import todosData from '../../data/todos.js';
+// import getUsers from '../../data/users.js';
+// import getTodos from '../../data/todos.js';
 
 export default {
     name: 'TodosComponent',
@@ -39,69 +39,18 @@ export default {
     },
 
     async fetch() {
-        this.pagination.current = Number(this.$route.query.page || 1);
-
-        // Get query string from filtered queries array
-        const todosQuery = '?'.concat(
-            Object.entries({
-                _page: this.pagination.current,
-                _limit: this.pagination.limit,
-                title_like: this.filter.title,
-                userId: this.$route.query.userId,
-            })
-                .filter(query => query[1])
-                .map(([key, value]) => {
-                    return `${key}=${value}`;
-                })
-                .join('&')
-        );
-
-        // Get TODOS by axios
-        const getTodos = this.$axios.get(
-            `https://jsonplaceholder.typicode.com/todos${todosQuery}`
-        );
-        // Get USERS by axios
-        const getUsers = this.$axios.get(
-            `https://jsonplaceholder.typicode.com/users`
-        );
-
-        // Pagination hook with first page
-        if (this.$route.query.page <= 1) {
-            this.$router.replace({
-                query: { ...this.$route.query, page: undefined },
-            });
-        }
-
         try {
-            // Destructuring responce data from axios requests
-            const [
-                { data: usersData },
-                {
-                    data: todosData,
-                    headers: { link: todosLink },
-                },
-            ] = await Promise.all([getUsers, getTodos]);
+            const [usersData, todosData] = await Promise.all([
+                this.getUsers(),
+                this.getTodos(),
+            ]);
 
             this.usersData = usersData;
             this.todosData = todosData;
-
-            // Parse links for pagination from "jsonplaceholder.typicode.com" service
-            if (todosLink) {
-                const {
-                    last: { _page: last },
-                } = parseLinkHeader(todosLink);
-                this.pagination.last = Number(last);
-            } else {
-                this.pagination.last = 1;
-            }
         } catch (e) {
             throw new Error(e.message);
         }
-
-        this.loading = false;
     },
-
-    fetchOnServer: false,
 
     computed: {
         filter() {
@@ -111,15 +60,15 @@ export default {
         todos() {
             if (!this.todosData.length) return [];
 
-            const todos = [...this.todosData];
-
-            return todos.map(todo => {
+            return [...this.todosData].map(todo => {
+                // Add user data in to todo object
                 todo.user = this.usersData.find(
                     user => user.id === todo.userId
                 );
 
+                // Replace title by adding <b> tag
                 if (this.filter.title) {
-                    todo.title = todo.title.replaceAll(
+                    todo.title = todo.title.replace(
                         this.filter.title,
                         `<b>${this.filter.title}</b>`
                     );
@@ -138,43 +87,102 @@ export default {
 
     watch: {
         'filter.title': {
-            handler() {
-                if (
-                    this.$route.query.page &&
-                    this.$route.query.page !== this.pagination.current
-                ) {
+            async handler(titleNew, titleOld) {
+                if (!titleNew && !titleOld) {
+                    return;
+                }
+
+                if (this.$route.query.page && this.$route.query.page > 1) {
                     this.$router.replace({
                         query: { ...this.$router.query, page: undefined },
                     });
                 } else {
-                    this.refresh();
+                    this.todosData = await this.getTodos();
                 }
             },
             immediate: true,
         },
 
         '$route.query': {
-            handler() {
-                if (process.client) {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth',
-                    });
-                }
+            async handler() {
+                this.todosData = await this.getTodos();
 
-                this.refresh();
+                if (process.client) {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth',
+                        });
+                    }, 150);
+                }
             },
             deep: true,
         },
     },
 
     methods: {
-        refresh() {
+        // Get USERS data from https://jsonplaceholder.typicode.com/todos and return promise
+        async getUsers() {
+            try {
+                // TEMP get data from local file
+                // const { data } = await getUsers();
+
+                const data = await this.$axios.$get(
+                    `https://jsonplaceholder.typicode.com/users`
+                );
+
+                return new Promise(resolve => {
+                    resolve(data);
+                });
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
+
+        // Get TODOS data from https://jsonplaceholder.typicode.com/todos and return promise
+        async getTodos() {
             this.loading = true;
-            clearTimeout(this.timer);
-            this.timer = setTimeout(() => {
-                this.$fetch();
-            }, 300);
+
+            try {
+                // TEMP get data from local file
+                // const { data, headers } = await getTodos();
+
+                const { data, headers } = await this.$axios.get(
+                    `https://jsonplaceholder.typicode.com/todos`,
+                    {
+                        params: {
+                            _page: this.$route.query.page || 1,
+                            _limit: this.pagination.limit,
+                            title_like: this.filter.title || undefined,
+                            userId: this.$route.query.userId || undefined,
+                        },
+                    }
+                );
+
+                this.processHeadersLink(headers.link);
+
+                return new Promise(resolve => {
+                    resolve(data);
+                });
+            } catch (error) {
+                throw new Error(error.message);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // Parse links for pagination from "jsonplaceholder.typicode.com" service
+        processHeadersLink(headersLink) {
+            if (headersLink) {
+                const {
+                    last: { _page },
+                } = parseLinkHeader(headersLink);
+                this.pagination.last = Number(_page);
+            } else {
+                this.pagination.last = 1;
+            }
+
+            this.pagination.current = Number(this.$route.query.page || 1);
         },
     },
 };

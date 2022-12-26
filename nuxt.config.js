@@ -6,6 +6,7 @@ export default {
 
     router: {
         base: process.env.NODE_ENV === 'production' ? '/test-table/' : '/',
+        middleware: ['check-pagination'],
     },
 
     generate: {

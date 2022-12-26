@@ -27,6 +27,10 @@ export default {
                 return this.$store.state.todos.filter.title;
             },
             set(value) {
+                if (!value.trim()) {
+                    return;
+                }
+
                 this.$store.commit('todos/filter', {
                     field: 'title',
                     value: value.trim(),
