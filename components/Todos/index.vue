@@ -87,11 +87,7 @@ export default {
 
     watch: {
         'filter.title': {
-            async handler(titleNew, titleOld) {
-                if (!titleNew && !titleOld) {
-                    return;
-                }
-
+            async handler() {
                 if (this.$route.query.page && this.$route.query.page > 1) {
                     this.$router.replace({
                         query: { ...this.$router.query, page: undefined },
@@ -100,7 +96,6 @@ export default {
                     this.todosData = await this.getTodos();
                 }
             },
-            immediate: true,
         },
 
         '$route.query': {
